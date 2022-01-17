@@ -21,7 +21,9 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('home.contact')
 
 Route::get('/about', AboutController::class);
 
-Route::resource('posts', PostsController::class)->only(['index', 'show', 'store', 'create', 'edit', 'update']);
+Route::resource('posts', PostsController::class);
+// Route::resource('/posts', PostController::class);
+
 
 // Route::get('/posts', function () use ($posts) {
 //     // dd(request()->all());
