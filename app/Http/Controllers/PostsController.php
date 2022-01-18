@@ -26,7 +26,7 @@ class PostsController extends Controller
 
         // dd(DB::getQueryLog());
 
-        return view('posts.index', ['posts' => BlogPost::orderBy('created_at', 'desc')->take(2)->get()]);
+        return view('posts.index', ['posts' => BlogPost::get()]);
     }
 
     /**
