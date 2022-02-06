@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
 use App\Models\Comment;
+use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class PostsController extends Controller
+class BlogPostController extends Controller
 {
     public function __construct()
     {
@@ -84,6 +85,9 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
+        $post = BlogPost::findOrFail($id);
+        $this->authorize('update', $post);
+
         return view('posts.edit', ['post' => BlogPost::findOrFail($id)]);
     }
 
@@ -97,6 +101,12 @@ class PostsController extends Controller
     public function update(StorePost $request, $id)
     {
         $post = BlogPost::findOrFail($id);
+        $this->authorize('update', $post);
+
+        // if (Gate::denies('update', $post)) {
+        //     abort(403, "You can't edit this blog post!");
+        // }
+
         $validated = $request->validated();
         $post->fill($validated);
         $post->save();
@@ -115,6 +125,12 @@ class PostsController extends Controller
     public function destroy($id)
     {
         $post = BlogPost::findOrFail($id);
+        $this->authorize('delete', $post);
+        
+        // if (Gate::denies('delete', $post)) {
+        //     abort(403, "You can't delete this blog post!");
+        // }
+
         Comment::where('blog_post_id', $post->id)->delete();
         $post->delete();
 

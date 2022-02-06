@@ -18,6 +18,10 @@
                         <h3>
                             <a href="{{ route('posts.show', ['post' => $post->id]) }}">{{ $post->title }}</a>
                         </h3>
+                        <p>
+                            Added {{ $post->created_at->diffForHumans() }}
+                            by {{ $post->user->name }}
+                        </p>
                     </td>
                     <td>
                         @if ($post->comments_count)
@@ -29,20 +33,24 @@
                     <td>
                         <div class="container xs">
                             <div class="row justify-content-start">
-                                <div class="col-6 col-sm-3">
-                                    <a href="{{ route('posts.edit', ['post' => $post->id]) }}" class="btn btn-primary">
-                                        Edit
-                                    </a>
-                                </div>
-                                <div class="col-6 col-sm-3">
-                                    <form method="POST" class="fm-inline"
-                                        action="{{ route('posts.destroy', ['post' => $post->id]) }}">
-                                        @csrf
-                                        @method('DELETE')
+                                @can('update', $post)
+                                    <div class="col-6 col-sm-3">
+                                        <a href="{{ route('posts.edit', ['post' => $post->id]) }}" class="btn btn-primary">
+                                            Edit
+                                        </a>
+                                    </div>
+                                @endcan
+                                @can('delete', $post)
+                                    <div class="col-6 col-sm-3">
+                                        <form method="POST" class="fm-inline"
+                                            action="{{ route('posts.destroy', ['post' => $post->id]) }}">
+                                            @csrf
+                                            @method('DELETE')
 
-                                        <input type="submit" value="Delete!" class="btn btn-danger" />
-                                    </form>
-                                </div>
+                                            <input type="submit" value="Delete!" class="btn btn-danger" />
+                                        </form>
+                                    </div>
+                                @endcan
                             </div>
                         </div>
                     </td>

@@ -18,6 +18,7 @@ class UsersTableSeeder extends Seeder
         User::factory()->state([
             'name' => 'Minh Tran',
             'email' => 'test@omegatheme.com',
+            'is_admin' => true
         ])->create();
         User::factory()->count($usersCount)->create();
     }
