@@ -34,7 +34,12 @@ class BlogPostController extends Controller
 
         // dd(DB::getQueryLog());
 
-        return view('posts.index', ['posts' => BlogPost::withCount('comments')->get()]);
+        return view('posts.index', [
+            'posts' => BlogPost::mostCommented()->withCount('comments')->get(),
+            'mostCommented' => BlogPost::mostCommented()->take(5)->get(),
+            'mostActive' => User::withMostBlogPosts()->take(5)->get(),
+            'mostActiveLastMonth' => User::withMostBlogPostsLastMonth()->take(5)->get()
+        ]);
         // return view('posts.index', ['posts' => DB::table('blog_posts')->withCount('comments')->paginate(15)]);
     }
 
@@ -56,8 +61,10 @@ class BlogPostController extends Controller
      */
     public function store(StorePost $request)
     {
-        $validated = $request->validated();
-        $post = BlogPost::create($validated);
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = $request->user()->id;
+
+        $post = BlogPost::create($validatedData);
 
         $request->session()->flash('status', 'The blog post was created!');
 
@@ -74,7 +81,11 @@ class BlogPostController extends Controller
     {
         // abort_if(!isset($this->posts[$id]), 404);
 
-        return view('posts.show', ['post' => BlogPost::with('comments')->findOrFail($id)]);
+        // return view('posts.show', ['post' => BlogPost::with(['comments' => function ($query) {
+        //     return $query->latest();
+        // }])->findOrFail($id)]);
+
+        return view('posts.show', ['post' => BlogPost::with(['comments'])->findOrFail($id)]);
     }
 
     /**
@@ -126,7 +137,7 @@ class BlogPostController extends Controller
     {
         $post = BlogPost::findOrFail($id);
         $this->authorize('delete', $post);
-        
+
         // if (Gate::denies('delete', $post)) {
         //     abort(403, "You can't delete this blog post!");
         // }
