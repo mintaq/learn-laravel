@@ -3,6 +3,7 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BlogPostController;
+use App\Http\Controllers\BlogPostTagController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,7 @@ Route::get('/secret', [HomeController::class, 'secret'])->name('home.secret')->m
 Route::get('/about', AboutController::class);
 
 Route::resource('posts', BlogPostController::class);
+Route::get('/posts/tag/{id}', [BlogPostTagController::class, 'index'])->name('posts.tags.index');
 
 Auth::routes();
 

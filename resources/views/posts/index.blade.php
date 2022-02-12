@@ -30,6 +30,13 @@
                                     Added {{ $post->created_at->diffForHumans() }}
                                     by {{ $post->user->name }}
                                 </p>
+                                <p>
+                                    @forelse ($post->tags as $tag)
+                                    <a href="{{ route('posts.tags.index', ['id' => $tag->id]) }}"
+                                        class="badge badge-success badge-lg">{{ $tag->name }}</a>
+                                @empty
+                                @endforelse
+                                </p>
                             </td>
                             <td>
                                 @if ($post->comments_count)
@@ -41,25 +48,29 @@
                             <td>
                                 <div class="container xs">
                                     <div class="row justify-content-start">
-                                        @can('update', $post)
-                                            <div class="col-6 col-sm-3">
-                                                <a href="{{ route('posts.edit', ['post' => $post->id]) }}"
-                                                    class="btn btn-primary">
-                                                    Edit
-                                                </a>
-                                            </div>
-                                        @endcan
-                                        @can('delete', $post)
-                                            <div class="col-6 col-sm-3">
-                                                <form method="POST" class="fm-inline"
-                                                    action="{{ route('posts.destroy', ['post' => $post->id]) }}">
-                                                    @csrf
-                                                    @method('DELETE')
+                                        @auth
+                                            @can('update', $post)
+                                                <div class="col-6 col-sm-3">
+                                                    <a href="{{ route('posts.edit', ['post' => $post->id]) }}"
+                                                        class="btn btn-primary">
+                                                        Edit
+                                                    </a>
+                                                </div>
+                                            @endcan
+                                        @endauth
+                                        @auth
+                                            @can('delete', $post)
+                                                <div class="col-6 col-sm-3">
+                                                    <form method="POST" class="fm-inline"
+                                                        action="{{ route('posts.destroy', ['post' => $post->id]) }}">
+                                                        @csrf
+                                                        @method('DELETE')
 
-                                                    <input type="submit" value="Delete!" class="btn btn-danger" />
-                                                </form>
-                                            </div>
-                                        @endcan
+                                                        <input type="submit" value="Delete!" class="btn btn-danger" />
+                                                    </form>
+                                                </div>
+                                            @endcan
+                                        @endauth
                                     </div>
                                 </div>
                             </td>
