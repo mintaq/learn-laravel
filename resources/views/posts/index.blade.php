@@ -26,16 +26,14 @@
                                         </del>
                                     @endif
                                 </h3>
-                                <p>
-                                    Added {{ $post->created_at->diffForHumans() }}
-                                    by {{ $post->user->name }}
-                                </p>
+                                @component('components.updated', ['date' => $post->created_at, 'name' => $post->user->name])
+                                @endcomponent
                                 <p>
                                     @forelse ($post->tags as $tag)
-                                    <a href="{{ route('posts.tags.index', ['id' => $tag->id]) }}"
-                                        class="badge badge-success badge-lg">{{ $tag->name }}</a>
-                                @empty
-                                @endforelse
+                                        <a href="{{ route('posts.tags.index', ['id' => $tag->id]) }}"
+                                            class="badge badge-success badge-lg">{{ $tag->name }}</a>
+                                    @empty
+                                    @endforelse
                                 </p>
                             </td>
                             <td>
@@ -83,49 +81,47 @@
         <div class="col-4">
             <div class="container">
                 <div class="row">
-                    <div class="card" style="width: 18rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">Most Commented</h5>
-                            <p class="card-text">What people are currently talking about</p>
-                        </div>
-                        <ul class="list-group list-group-flush">
+                    @component('components.card', [
+                        'title' => 'Most Commented',
+                        'subtitle' => 'What people are currently
+                        talking about',
+                        ])
+                        @slot('items')
                             @foreach ($mostCommented as $post)
                                 <li class="list-group-item">
                                     <a href="{{ route('posts.show', ['post' => $post->id]) }}">{{ $post->title }}</a>
                                 </li>
                             @endforeach
-                        </ul>
-                    </div>
+                        @endslot
+                    @endcomponent
+                </div>
+
+
+                <div class="row mt-4">
+                    {{-- <div class="card" style="width: 18rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">Most Active</h5>
+                                <p class="card-text">User with most posts written</p>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                @foreach ($mostActive as $user)
+                                    <li class="list-group-item">
+                                        {{ $user->name }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div> --}}
+                    @component('components.card', ['title' => 'Most Active', 'subtitle' => 'User with most posts written'])
+                        @slot('items', collect($mostActive)->pluck('name'))
+                    @endcomponent
                 </div>
                 <div class="row mt-4">
-                    <div class="card" style="width: 18rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">Most Active</h5>
-                            <p class="card-text">User with most posts written</p>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            @foreach ($mostActive as $user)
-                                <li class="list-group-item">
-                                    {{ $user->name }}
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-                <div class="row mt-4">
-                    <div class="card" style="width: 18rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">Most Active Last Moth</h5>
-                            <p class="card-text">User with most posts written last month</p>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            @foreach ($mostActiveLastMonth as $user)
-                                <li class="list-group-item">
-                                    {{ $user->name }}
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
+                    @component('components.card', [
+                        'title' => 'Most Active Last Moth',
+                        'subtitle' => 'Most Active Last Moth',
+                        ])
+                        @slot('items', collect($mostActiveLastMonth)->pluck('name'))
+                    @endcomponent
                 </div>
             </div>
         </div>
