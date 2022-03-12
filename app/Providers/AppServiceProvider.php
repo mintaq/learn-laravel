@@ -8,6 +8,7 @@ use App\View\Components\Card;
 use App\View\Components\Errors;
 use App\View\Components\Updated;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Schema::defaultStringLength(191);
         Blade::component('badge', Badge::class);
         Blade::component('updated', Updated::class);
         Blade::component('card', Card::class);
