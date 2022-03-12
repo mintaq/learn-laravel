@@ -4,9 +4,9 @@
     @if ($post->image)
         <div
             style="background-image: url('{{ $post->image->url() }}'); min-height: 500px; color: white; text-align: center; background-attachment: fixed;">
-        <h1 style="padding-top: 100px; text-shadow: 1px 2px #000">
-    @else
-        <h1>
+            <h1 style="padding-top: 100px; text-shadow: 1px 2px #000">
+            @else
+                <h1>
     @endif
     <h1>{{ $post->title }}
 
@@ -64,16 +64,9 @@
 
     <h4>Comments</h4>
 
-    @include('comments._form')
+    @component('components.comment-form', ['route' => route('posts.comments.store', ['post' => $post->id])])
+    @endcomponent
 
-    @forelse ($post->comments as $comment)
-        <p>
-            <span class="text-muted">[{{ $comment->user->name }}]</span>
-            {{ $comment->content }}
-        </p>
-        @component('components.updated', ['date' => $comment->created_at])
-        @endcomponent
-    @empty
-        <p>No comments!</p>
-    @endforelse
+    @component('components.comment-list', ['comments' => $post->comments])
+    @endcomponent
 @endsection('content')

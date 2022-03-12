@@ -5,6 +5,7 @@ use App\Http\Controllers\BlogPostCommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BlogPostController;
 use App\Http\Controllers\BlogPostTagController;
+use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,7 @@ Route::resource('posts', BlogPostController::class);
 Route::get('/posts/tag/{id}', [BlogPostTagController::class, 'index'])->name('posts.tags.index');
 
 Route::resource('posts.comments', BlogPostCommentController::class)->only(['store']);
+Route::resource('users.comments', UserCommentController::class)->only(['store']);
 Route::resource('users', UserController::class)->only(['show', 'edit', 'update']);
 
 Auth::routes();
