@@ -12195,3 +12195,8 @@ a.badge-success:focus {
   box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);
 }
 
+.avatar {
+  width: 128px;
+  height: 128px;
+}
+

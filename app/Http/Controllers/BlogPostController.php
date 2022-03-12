@@ -58,8 +58,9 @@ class BlogPostController extends Controller
 
         if ($request->hasFile('thumbnail')) {
             // $request->file('thumbnail')->store('thumbnails');
-            $file =  $request->file('thumbnail');
-            $path = $file->storeAs('thumbnails', $blogPost->id . '.' . $file->guessExtension());
+            // $file =  $request->file('thumbnail');
+            // $path = $file->storeAs('thumbnails', $blogPost->id . '.' . $file->guessExtension());
+            $path = $request->file('thumbnail')->store('thumbnails');
             $blogPost->image()->save(
                 Image::create([
                     'path' => $path
@@ -163,6 +164,21 @@ class BlogPostController extends Controller
 
         $validated = $request->validated();
         $post->fill($validated);
+
+        if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('thumbnails');
+
+            if ($post->image) {
+                Storage::delete($post->image->path);
+                $post->image->path = $path;
+                $post->image->save();
+            } else {
+                $post->image()->save(
+                    Image::create(['path' => $path])
+                );
+            }
+        }
+
         $post->save();
 
         $request->session()->flash('status' . 'Blog post was updated!');
