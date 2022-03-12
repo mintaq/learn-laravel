@@ -32,6 +32,11 @@ class BlogPost extends Model
         return $this->belongsToMany(Tag::class)->withTimestamps();
     }
 
+    public function image()
+    {
+        return $this->hasOne(Image::class);
+    }
+
     public function scopeLatest(Builder $query)
     {
         return $query->orderBy(static::CREATED_AT, 'desc');
@@ -40,6 +45,11 @@ class BlogPost extends Model
     public function scopeMostCommented(Builder $query)
     {
         return $query->withCount('comments')->orderBy('comments_count', 'desc');
+    }
+
+    public function scopeLatestWithRelations(Builder $query)
+    {
+        return $query->latest()->withCount('comments')->with('user')->with('tags');
     }
 
     public static function boot()
@@ -52,10 +62,11 @@ class BlogPost extends Model
 
         static::deleting(function (BlogPost $blogPost) {
             $blogPost->comments()->delete();
+            Cache::tags(['blog-post'])->forget("blog-post-{$blogPost->id}");
         });
 
         static::updating(function (BlogPost $blogPost) {
-            Cache::forget("blog-post-{$blogPost->id}");
+            Cache::tags(['blog-post'])->forget("blog-post-{$blogPost->id}");
         });
 
         static::restoring(function (BlogPost $blogPost) {

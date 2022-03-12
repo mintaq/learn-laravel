@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\BlogPostCommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BlogPostController;
 use App\Http\Controllers\BlogPostTagController;
@@ -28,6 +29,8 @@ Route::get('/about', AboutController::class);
 
 Route::resource('posts', BlogPostController::class);
 Route::get('/posts/tag/{id}', [BlogPostTagController::class, 'index'])->name('posts.tags.index');
+
+Route::resource('posts.comments', BlogPostCommentController::class)->only(['store']);
 
 Auth::routes();
 

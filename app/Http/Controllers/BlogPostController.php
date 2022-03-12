@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
 use App\Models\Comment;
+use App\Models\Image;
 use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Prophecy\Call\Call;
 
 class BlogPostController extends Controller
@@ -27,7 +29,7 @@ class BlogPostController extends Controller
     public function index()
     {
         return view('posts.index', [
-            'posts' => BlogPost::mostCommented()->withCount('comments')->with('user')->with('tags')->get()
+            'posts' => BlogPost::mostCommented()->latestWithRelations()->get()
         ]);
         // return view('posts.index', ['posts' => DB::table('blog_posts')->withCount('comments')->paginate(15)]);
     }
@@ -52,12 +54,23 @@ class BlogPostController extends Controller
     {
         $validatedData = $request->validated();
         $validatedData['user_id'] = $request->user()->id;
+        $blogPost = BlogPost::create($validatedData);
 
-        $post = BlogPost::create($validatedData);
+        if ($request->hasFile('thumbnail')) {
+            // $request->file('thumbnail')->store('thumbnails');
+            $file =  $request->file('thumbnail');
+            $path = $file->storeAs('thumbnails', $blogPost->id . '.' . $file->guessExtension());
+            $blogPost->image()->save(
+                Image::create([
+                    'path' => $path
+                ])
+            );
+        }
+
 
         $request->session()->flash('status', 'The blog post was created!');
 
-        return redirect()->route('posts.show', ['post' => $post->id]);
+        return redirect()->route('posts.show', ['post' => $blogPost->id]);
     }
 
     /**
@@ -75,7 +88,7 @@ class BlogPostController extends Controller
         // }])->findOrFail($id)]);
 
         $blogPost = Cache::tags(['blog-post'])->remember("blog-post-{$id}", 60, function () use ($id) {
-            return BlogPost::with(['comments'])->with('tags')->with('user')->findOrFail($id);
+            return BlogPost::with(['comments', 'tags', 'user', 'comments.user'])->findOrFail($id);
         });
 
         $tags = $blogPost->tags;

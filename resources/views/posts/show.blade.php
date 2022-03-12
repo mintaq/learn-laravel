@@ -30,7 +30,7 @@
         @endforelse
     </ul>
 
-    <div class="mb-2 mt-2">
+    {{-- <div class="mb-2 mt-2">
         @auth
             <form method="POST" action="{{ $route }}">
                 @csrf
@@ -46,9 +46,12 @@
             <a href="{{ route('login') }}">Sign-in</a> to post comments!
         @endauth
     </div>
-    <hr />
+    <hr /> --}}
 
     <h4>Comments</h4>
+
+    @include('comments._form')
+
     @forelse ($post->comments as $comment)
         <p>
             <span class="text-muted">[{{ $comment->user->name }}]</span>

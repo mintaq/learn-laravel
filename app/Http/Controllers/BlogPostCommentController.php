@@ -22,9 +22,9 @@ class BlogPostCommentController extends Controller
             'user_id' => $request->user()->id
         ]);
 
-        Mail::to($post->user)->send(
-            new CommentPosted($comment)
-        );
+        // Mail::to($post->user)->send(
+        //     new CommentPosted($comment)
+        // );
 
         return redirect()->back()
             ->withStatus('Comment was created!');
