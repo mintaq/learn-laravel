@@ -8,6 +8,7 @@ use App\View\Components\Card;
 use App\View\Components\CommentForm;
 use App\View\Components\CommentList;
 use App\View\Components\Errors;
+use App\View\Components\Tags;
 use App\View\Components\Updated;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
@@ -39,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::component('errors', Errors::class);
         Blade::component('comment-form', CommentForm::class);
         Blade::component('comment-list', CommentList::class);
-        Blade::component('components.tags', 'tags');
+        Blade::component('components.tags', Tags::class);
 
         view()->composer('posts.index', ActivityComposer::class);
     }
