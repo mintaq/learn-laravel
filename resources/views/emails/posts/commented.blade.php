@@ -9,8 +9,17 @@
 
 <p> Someone has commented on your blog post <a
         href="{{ route('posts.show', ['post' => $comment->commentable->id]) }}">
-        {{ $comemnt->commentable->title }}</a></p>
+        {{ $comment->commentable->title }}</a></p>
 
 <hr>
 
+<p>
+    <img src="{{ $message->embed($comment->user->image->url()) }}" alt="">
+    <a href="{{ route('users.show', ['user' => $comment->user->id]) }}">
+        {{ $comment->user->name }}
+    </a> said:
+</p>
 
+<p>
+    "{{ $comment->content }}"
+</p>

@@ -64,4 +64,17 @@ class User extends Authenticatable
         }])->has('blogPosts', '>=', 2)
             ->orderBy('blog_posts_count', 'desc');
     }
+
+    public function scopeThatHasCommentedOnPost(Builder $query, BlogPost $blogPost)
+    {
+        $query->whereHas('comments', function ($query) use ($blogPost) {
+            return $query->where('commentable_id', '=', $blogPost->id)
+                ->where('commentable_type', '=', BlogPost::class);
+        });
+    }
+
+    public function scopeThatIsAnAdmin(Builder $query)
+    {
+        return $query->where('is_admin', 1);
+    }
 }

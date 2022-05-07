@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CommentPosted as EventsCommentPosted;
 use App\Http\Requests\StoreComment;
+use App\Jobs\NotifyUserPostWasCommented;
+use App\Jobs\ThrottleMail;
 use App\Mail\CommentPosted;
+use App\Mail\CommentPostedMarkdown;
 use App\Models\BlogPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -23,8 +27,10 @@ class BlogPostCommentController extends Controller
         ]);
 
         // Mail::to($post->user)->send(
-        //     new CommentPosted($comment)
+        //     new CommentPostedMarkdown($comment)
         // );
+
+        event(new EventsCommentPosted($comment));
 
         return redirect()->back()
             ->withStatus('Comment was created!');
